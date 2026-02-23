@@ -1,0 +1,95 @@
+<section class="hero">
+  <div class="container hero__inner">
+    <div class="hero__content">
+      <h1 class="hero__title">{{ heroTitle }}</h1>
+      <p class="hero__subtitle">{{ heroSubtitle }}</p>
+      <p class="hero__description">
+        {{ heroDescription }}
+      </p>
+      <div class="hero__actions">
+        <button class="btn btn-primary" (click)="scrollToSection('featured-products')">
+          Khám phá hoa văn
+        </button>
+        <button class="btn" (click)="scrollToSection('new-products')">
+          Xem sản phẩm mới
+        </button>
+      </div>
+    </div>
+
+    <div class="hero__visual">
+      <div class="hero__card hero__card--main">
+        <div class="hero__card-title">Hoa văn Phượng</div>
+        <p class="hero__card-text">
+          Bộ sưu tập họa tiết phượng hoàng được tái dựng từ kiến trúc đình chùa, cung điện Việt cổ.
+        </p>
+      </div>
+      <div class="hero__card hero__card--secondary">
+        <div class="hero__card-title">Rồng thời Lý - Trần</div>
+        <p class="hero__card-text">
+          Dáng rồng mềm, thân lượn hình sin, không chân móng vuốt, mang tinh thần hiền hòa.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Carousel tự động cho sản phẩm nổi bật -->
+<section id="featured-products" class="section">
+<app-product-carousel
+  [products]="featuredProducts"
+  title="Sản phẩm nổi bật"
+  subtitle="Những hoa văn được yêu thích nhất"
+  [autoSlide]="true"
+  [slideInterval]="4000"
+></app-product-carousel>
+</section>
+
+<!-- Hoa văn mới với carousel có nút điều hướng -->
+<section id="new-products" class="section section--new">
+  <div class="container">
+    <app-product-carousel
+      [products]="newProducts"
+      title="Hoa văn mới"
+      subtitle="Những sản phẩm hoa văn được cập nhật gần đây"
+      [autoSlide]="false"
+    ></app-product-carousel>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="container">
+    <div class="section__header">
+      <div>
+        <h2 class="section__title">Bộ sưu tập theo triều đại</h2>
+        <p class="section__subtitle">
+          Hoa văn được hệ thống theo từng giai đoạn lịch sử để bạn dễ dàng tra cứu và sáng tạo.
+        </p>
+      </div>
+    </div>
+
+    <div class="timeline-container">
+      <div class="timeline-line"></div>
+      
+      <div class="timeline-milestones">
+        <article 
+          class="timeline-milestone" 
+          *ngFor="let section of highlightSections; let i = index"
+          [style.--index]="i"
+          (click)="navigateToCategory(section.categoryName)"
+        >
+          <div class="milestone-dot"></div>
+          <div class="milestone-card" [style.backgroundImage]="'url(' + section.imageUrl + ')'">
+            <div class="milestone-card__overlay"></div>
+            <div class="milestone-card__content">
+              <div class="milestone-year">{{ getEpochYear(i) }}</div>
+              <h3 class="milestone-title">{{ section.title }}</h3>
+              <p class="milestone-description">{{ section.description }}</p>
+              <button class="btn btn-outline-white milestone-button" (click)="navigateToCategory(section.categoryName); $event.stopPropagation()">Khám phá</button>
+        </div>
+          </div>
+        </article>
+        </div>
+    </div>
+  </div>
+</section>
+

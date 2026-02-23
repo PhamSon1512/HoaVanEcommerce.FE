@@ -1,0 +1,218 @@
+<section class="cart-page">
+  <div class="container">
+    <div class="cart-page__header">
+      <h1 class="cart-page__title">Giỏ hàng của tôi</h1>
+      <p class="cart-page__subtitle" *ngIf="!isLoggedIn">
+        <a routerLink="/dang-nhap">Đăng nhập</a> để lưu giỏ hàng và đồng bộ trên nhiều thiết bị.
+      </p>
+    </div>
+
+    <div class="cart-page__empty" *ngIf="isEmpty">
+      <div class="cart-page__empty-icon">🛒</div>
+      <h2>Giỏ hàng trống</h2>
+      <p>Bạn chưa có sản phẩm nào trong giỏ hàng.</p>
+      <a routerLink="/danh-muc" class="btn btn-primary">Tiếp tục mua sắm</a>
+    </div>
+
+    <div class="cart-page__content" *ngIf="!isEmpty">
+      <div class="cart-page__items">
+        <div class="cart-page__select-all" *ngIf="isLoggedIn">
+          <label class="cart-page__checkbox-label">
+            <input
+              type="checkbox"
+              [checked]="allSelectableSelected"
+              (change)="toggleSelectAll()"
+            />
+            <span>Chọn tất cả</span>
+          </label>
+        </div>
+        <div class="cart-page__item" *ngFor="let item of items">
+          <div class="cart-page__item-checkbox" *ngIf="isLoggedIn && item.id">
+            <input
+              type="checkbox"
+              [checked]="selectedItems.has(item.id)"
+              (change)="toggleItemSelection(item)"
+            />
+          </div>
+          <div class="cart-page__item-image">
+            <img [src]="item.imageUrl" [alt]="item.name" />
+          </div>
+
+          <div class="cart-page__item-info">
+            <h3 class="cart-page__item-name">{{ item.name }}</h3>
+            <p class="cart-page__item-meta">
+              <span *ngIf="item.code">Mã: {{ item.code }}</span>
+              <span>{{ item.categoryName }}</span>
+            </p>
+            <p class="cart-page__item-price">{{ item.price | number }}đ</p>
+          </div>
+
+          <div class="cart-page__item-quantity">
+            <label>
+              <span>Số lượng:</span>
+              <div class="cart-page__quantity-controls">
+                <button
+                  type="button"
+                  class="cart-page__quantity-btn"
+                  (click)="updateQuantity(item, item.quantity - 1)"
+                  [disabled]="item.quantity <= 1"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="cart-page__quantity-input"
+                  [value]="item.quantity"
+                  (change)="updateQuantity(item, +$any($event.target).value)"
+                  min="1"
+                />
+                <button
+                  type="button"
+                  class="cart-page__quantity-btn"
+                  (click)="updateQuantity(item, item.quantity + 1)"
+                >
+                  +
+                </button>
+              </div>
+            </label>
+          </div>
+
+          <div class="cart-page__item-total">
+            <p class="cart-page__item-total-label">Thành tiền</p>
+            <p class="cart-page__item-total-value">{{ (item.price * item.quantity) | number }}đ</p>
+          </div>
+
+          <div class="cart-page__item-actions">
+            <button
+              type="button"
+              class="cart-page__remove-btn"
+              (click)="removeItem(item)"
+              aria-label="Xóa sản phẩm"
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="cart-page__summary">
+        <div class="cart-page__summary-header">
+          <h2>Tóm tắt đơn hàng</h2>
+        </div>
+
+        <div class="cart-page__summary-body">
+          <div class="cart-page__summary-row" *ngIf="!isLoggedIn || !hasSelectedItems">
+            <span>Tổng số sản phẩm:</span>
+            <span>{{ items.length }}</span>
+          </div>
+          <div class="cart-page__summary-row" *ngIf="!isLoggedIn || !hasSelectedItems">
+            <span>Tổng số lượng:</span>
+            <span>{{ totalQuantity }}</span>
+          </div>
+          <div class="cart-page__summary-row" *ngIf="isLoggedIn && hasSelectedItems">
+            <span>Sản phẩm đã chọn:</span>
+            <span>{{ selectedItems.size }}</span>
+          </div>
+          <div class="cart-page__summary-row" *ngIf="isLoggedIn && hasSelectedItems">
+            <span>Số lượng đã chọn:</span>
+            <span>{{ selectedTotalQuantity }}</span>
+          </div>
+          <div class="cart-page__summary-row cart-page__summary-row--total">
+            <span>Tổng tiền:</span>
+            <span>{{ (isLoggedIn ? (hasSelectedItems ? selectedTotalAmount : 0) : totalAmount) | number }}đ</span>
+          </div>
+        </div>
+
+        <div class="cart-page__summary-footer">
+          <button
+            type="button"
+            class="btn btn-outline cart-page__clear-btn"
+            (click)="clearCart()"
+          >
+            Xóa tất cả
+          </button>
+          <a routerLink="/danh-muc" class="btn btn-outline">Tiếp tục mua sắm</a>
+          <button
+            type="button"
+            class="btn btn-primary cart-page__checkout-btn"
+            [disabled]="isEmpty || (isLoggedIn && !hasSelectedItems)"
+            (click)="checkout()"
+            [class.loading]="isLoading"
+          >
+            <span *ngIf="!isLoading">Thanh toán</span>
+            <span *ngIf="isLoading">Đang xử lý...</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="payment-modal" *ngIf="showPaymentModal" (click)="closePaymentModal()">
+      <div class="payment-modal__content" (click)="$event.stopPropagation()">
+        <button class="payment-modal__close" (click)="closePaymentModal()">×</button>
+        
+        <div class="payment-modal__header">
+          <h2>Thanh toán đơn hàng</h2>
+          <p class="payment-modal__order-code">Thanh toán {{ paymentPreviewItems.length }} sản phẩm</p>
+        </div>
+
+        <div class="payment-modal__body">
+          <div class="payment-modal__order-info">
+            <h3>Thông tin đơn hàng</h3>
+            <div class="payment-modal__items">
+              <div class="payment-modal__item" *ngFor="let item of paymentPreviewItems">
+                <img [src]="item.imageUrl" [alt]="item.name" />
+                <div class="payment-modal__item-details">
+                  <h4>{{ item.name }}</h4>
+                  <p>Số lượng: {{ item.quantity }} × {{ item.price | number }}đ</p>
+                </div>
+                <div class="payment-modal__item-total">{{ (item.price * item.quantity) | number }}đ</div>
+              </div>
+            </div>
+            <div class="payment-modal__total">
+              <strong>Tổng tiền: {{ paymentPreviewTotalAmount | number }}đ</strong>
+            </div>
+          </div>
+
+          <div class="payment-modal__qr-section" *ngIf="shopSetting">
+            <h3>Quét mã QR để thanh toán</h3>
+            <div class="payment-modal__qr-info">
+              <p><strong>Ngân hàng:</strong> {{ shopSetting.bankName }}</p>
+              <p><strong>Tên tài khoản:</strong> {{ shopSetting.accountName }}</p>
+              <p><strong>Số tài khoản:</strong> {{ shopSetting.accountNumber }}</p>
+              <p><strong>Số tiền:</strong> {{ paymentPreviewTotalAmount | number }}đ</p>
+            </div>
+            <div class="payment-modal__qr-code">
+              <img [src]="shopSetting.qrImageUrl" alt="QR Code" />
+            </div>
+            <p class="payment-modal__note">Vui lòng quét mã QR và chuyển khoản đúng số tiền. Sau đó nhấn "Đã thanh toán".</p>
+          </div>
+        </div>
+
+        <div class="payment-modal__footer">
+          <button
+            type="button"
+            class="btn btn-outline"
+            (click)="closePaymentModal()"
+            [disabled]="isLoading"
+          >
+            Hủy
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="confirmPayment()"
+            [disabled]="isLoading"
+          >
+            <span *ngIf="!isLoading">Đã thanh toán</span>
+            <span *ngIf="isLoading">Đang xử lý...</span>
+          </button>
+        </div>
+
+        <div class="payment-modal__error" *ngIf="error">
+          {{ error }}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

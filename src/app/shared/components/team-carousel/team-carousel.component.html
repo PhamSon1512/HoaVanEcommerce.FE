@@ -1,0 +1,57 @@
+<div class="team-carousel">
+  <div class="container" *ngIf="title || subtitle">
+    <div class="team-carousel__header">
+      <div>
+        <h2 class="team-carousel__title" *ngIf="title">{{ title }}</h2>
+        <p class="team-carousel__subtitle" *ngIf="subtitle">{{ subtitle }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="team-carousel__wrapper">
+    <div class="container team-carousel__container">
+      <button
+        class="team-carousel__nav team-carousel__nav--prev"
+        type="button"
+        (click)="prev()"
+        [disabled]="!canGoPrev"
+        aria-label="Trước"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="team-carousel__track">
+        <div
+          class="team-carousel__slide"
+          [style.transform]="transformValue"
+        >
+          <article class="team-card" *ngFor="let member of members; trackBy: trackByIndex">
+            <div class="team-card__image-wrap">
+              <div class="team-card__image" [style.backgroundImage]="'url(' + member.imageUrl + ')'"></div>
+            </div>
+            <div class="team-card__body">
+              <h3 class="team-card__name">{{ member.name }}</h3>
+              <p class="team-card__role">{{ member.role }}</p>
+              <p class="team-card__description">{{ member.description }}</p>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <button
+        class="team-carousel__nav team-carousel__nav--next"
+        type="button"
+        (click)="next()"
+        [disabled]="!canGoNext"
+        aria-label="Sau"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,30 @@
+<section class="auth-page">
+  <div class="container auth-card">
+    <h1 class="auth-title">Đăng nhập</h1>
+    <p class="auth-subtitle">Chào mừng bạn quay lại Nhớ Như In.</p>
+
+    <form (ngSubmit)="submit()" class="auth-form">
+      <label class="auth-label">
+        <div>Email <span style="color: #e53935;">*</span></div>
+        <input class="auth-input" type="email" [(ngModel)]="email" name="email" required />
+      </label>
+
+      <label class="auth-label">
+        <div>Mật khẩu <span style="color: #e53935;">*</span></div>
+        <input class="auth-input" type="password" [(ngModel)]="password" name="password" required />
+      </label>
+
+      <p class="auth-error" *ngIf="error">{{ error }}</p>
+
+      <button class="btn btn-primary auth-submit" type="submit" [disabled]="isSubmitting">
+        Đăng nhập
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <span>Chưa có tài khoản?</span>
+      <a class="auth-link" routerLink="/dang-ky">Đăng ký</a>
+    </div>
+  </div>
+</section>
+

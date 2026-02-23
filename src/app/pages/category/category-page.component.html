@@ -1,0 +1,78 @@
+<!-- category-page.component.html: HTML cho component CategoryPageComponent -->
+
+<div [@pageAnimation]>
+<section class="category-hero">
+  <div class="container">
+    <nav class="breadcrumb">
+      <span>Trang chủ</span>
+      <span>/</span>
+      <span>Hoa văn</span>
+    </nav>
+    <h1 class="category-hero__title">Hoa văn</h1>
+    <p class="category-hero__subtitle">
+      Lọc theo triều đại, chủ đề và mã sản phẩm để tìm đúng hoa văn bạn cần.
+    </p>
+  </div>
+</section>
+
+<section class="category-layout">
+  <div class="container category-layout__inner">
+    <aside class="category-sidebar">
+      <h2 class="category-sidebar__title">Danh mục hoa văn</h2>
+      <button
+        class="category-pill"
+        [class.category-pill--active]="selectedCategoryId === null"
+        (click)="selectCategory(null)"
+      >
+        Tất cả
+      </button>
+      <button
+        class="category-pill"
+        *ngFor="let c of categories"
+        [class.category-pill--active]="selectedCategoryId === c.id"
+        (click)="selectCategory(c.id)"
+      >
+        {{ c.name }}
+      </button>
+    </aside>
+
+    <div class="category-content">
+      <div class="category-toolbar">
+        <input
+          class="category-search"
+          type="text"
+          placeholder="Tìm theo tên hoặc mã hoa văn..."
+          [(ngModel)]="searchTerm"
+        />
+        <div class="category-toolbar__meta">
+          <span>{{ filteredProducts.length }} sản phẩm</span>
+        </div>
+      </div>
+
+      <div class="product-grid" [@listAnimation]="filteredProducts.length">
+        <article class="product-card" *ngFor="let product of filteredProducts">
+          <div class="product-card__image-wrap">
+            <img [src]="product.imageUrl" [alt]="product.name" />
+          </div>
+          <div class="product-card__body">
+            <div class="product-card__category">{{ product.categoryName }}</div>
+            <h3 class="product-card__name">{{ product.name }}</h3>
+            <p class="product-card__code" *ngIf="product.code">{{ product.code }}</p>
+            <div class="product-card__bottom">
+              <span class="product-card__price">
+                {{ product.price | currency: 'VND':'symbol':'1.0-0':'vi' }}
+              </span>
+              <button class="btn btn-primary btn-sm" (click)="addToCart(product)">Thêm vào giỏ</button>
+            </div>
+          </div>
+        </article>
+
+        <p *ngIf="!filteredProducts.length" class="category-empty">
+          Không tìm thấy hoa văn phù hợp với bộ lọc hiện tại.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+

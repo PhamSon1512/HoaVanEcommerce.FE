@@ -1,0 +1,339 @@
+<div class="admin-products">
+  <div class="admin-products__layout">
+    <!-- Sidebar -->
+    <aside class="admin-products__sidebar">
+      <div class="admin-products__logo">
+        <div class="admin-products__logo-mark">HV</div>
+        <div>
+          <div class="admin-products__logo-title">Hoa Văn Admin</div>
+          <div class="admin-products__logo-sub">Quản lý hoa văn</div>
+        </div>
+      </div>
+
+      <nav class="admin-products__nav">
+        <div class="admin-products__nav-group">
+          <p class="admin-products__nav-label">Quản lý</p>
+          <a
+            routerLink="/admin/hoa-van"
+            class="admin-products__nav-item admin-products__nav-item--active"
+          >
+            Hoa văn
+          </a>
+          <a
+            routerLink="/admin/orders"
+            class="admin-products__nav-item"
+          >
+            Đơn hàng
+          </a>
+        </div>
+
+        <div class="admin-products__stats">
+          <div class="admin-products__stat-card">
+            <div class="admin-products__stat-label">Tổng số hoa văn</div>
+            <div class="admin-products__stat-value">{{ totalProducts }}</div>
+            <div class="admin-products__stat-row">
+              <span class="admin-products__stat-pill admin-products__stat-pill--on">
+                Đang hiển thị: {{ activeProducts }}
+              </span>
+              <span class="admin-products__stat-pill admin-products__stat-pill--off">
+                Ẩn: {{ inactiveProducts }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main class="admin-products__main">
+      <div class="admin-products__header">
+        <div>
+          <h1 class="admin-products__title">Quản lý hoa văn</h1>
+          <p class="admin-products__subtitle">
+            Quản lý bộ sưu tập hoa văn, cập nhật giá và trạng thái hiển thị.
+          </p>
+        </div>
+        <div class="admin-products__header-actions">
+          <button class="btn btn-outline btn-sm" (click)="refresh()" [disabled]="loading">
+            Làm mới
+          </button>
+          <button class="btn btn-primary btn-sm" (click)="openCreate()">
+            Thêm hoa văn
+          </button>
+        </div>
+      </div>
+
+      <section class="admin-products__filter-card">
+        <div class="admin-products__filters">
+          <div class="admin-products__filter-field">
+            <label class="admin-products__filter-label">Tìm kiếm</label>
+            <input
+              class="admin-products__input"
+              type="text"
+              [(ngModel)]="search"
+              (ngModelChange)="refresh()"
+              placeholder="Tên, mã hoa văn..."
+            />
+          </div>
+          <div class="admin-products__filter-field">
+            <label class="admin-products__filter-label">Danh mục</label>
+            <select
+              class="admin-products__select"
+              [(ngModel)]="categoryId"
+              (ngModelChange)="refresh()"
+            >
+              <option [ngValue]="null">Tất cả danh mục</option>
+              <option *ngFor="let c of categories" [ngValue]="c.id">
+                {{ c.name }}
+              </option>
+            </select>
+          </div>
+          <div class="admin-products__filter-actions">
+            <button class="btn btn-outline btn-sm" (click)="refresh()" [disabled]="loading">
+              Lọc
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <div
+        class="admin-products__state admin-products__state--error"
+        *ngIf="error"
+      >
+        {{ error }}
+      </div>
+
+      <div class="admin-products__state" *ngIf="loading">
+        Đang tải danh sách hoa văn...
+      </div>
+
+      <div class="admin-products__table-wrap" *ngIf="!loading">
+        <table class="admin-products__table">
+          <thead>
+            <tr>
+              <th>Hoa văn</th>
+              <th>Mã</th>
+              <th>Danh mục</th>
+              <th>Giá</th>
+              <th>Trạng thái</th>
+              <th style="width: 160px">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of products">
+              <td>
+                <div style="display: flex; align-items: center; gap: 10px">
+                  <img
+                    class="admin-products__thumb"
+                    [src]="p.imageUrl"
+                    [alt]="p.name"
+                  />
+                  <div>
+                    <div>{{ p.name }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>{{ p.code }}</td>
+              <td>{{ getCategoryNameById(p.categoryId) }}</td>
+              <td>{{ p.price | number }}đ</td>
+              <td>
+                <span
+                  class="admin-products__badge"
+                  [ngClass]="{ 'admin-products__badge--off': !p.isActive }"
+                >
+                  {{ p.isActive ? 'Đang hiển thị' : 'Đang ẩn' }}
+                </span>
+              </td>
+              <td>
+                <div class="admin-products__row-actions">
+                  <button
+                    class="btn btn-outline btn-sm"
+                    type="button"
+                    (click)="openEdit(p)"
+                  >
+                    Sửa
+                  </button>
+                  <button
+                    class="btn btn-primary btn-sm"
+                    type="button"
+                    (click)="delete(p)"
+                    [disabled]="loading"
+                  >
+                    Xóa
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="!products.length">
+              <td colspan="6" class="admin-products__empty">
+                Chưa có hoa văn nào.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Modal tạo / sửa hoa văn -->
+      <div
+        class="admin-products__modal"
+        *ngIf="isFormOpen"
+      >
+        <div
+          class="admin-products__modal-backdrop"
+          (click)="closeForm()"
+        ></div>
+        <div class="admin-products__modal-card">
+          <div class="admin-products__modal-head">
+            <h2>{{ editingId ? 'Chỉnh sửa hoa văn' : 'Thêm hoa văn mới' }}</h2>
+            <button class="admin-products__close" type="button" (click)="closeForm()">×</button>
+          </div>
+          <div class="admin-products__modal-body">
+            <div class="admin-products__modal-columns">
+              <div>
+                <form class="admin-products__form" (ngSubmit)="save()">
+                  <div class="admin-products__form-section">
+                    <h3>Thông tin cơ bản</h3>
+                    <p class="admin-products__form-note">
+                      Nhập đầy đủ tên hoa văn, danh mục và giá bán.
+                    </p>
+                    <div class="admin-products__grid">
+                      <label class="admin-products__field">
+                        <span>Tên hoa văn <span class="admin-products__required">*</span></span>
+                        <input
+                          class="admin-products__input"
+                          [(ngModel)]="form.name"
+                          name="name"
+                          required
+                        />
+                      </label>
+                      <label class="admin-products__field">
+                        <span>Mã hoa văn</span>
+                        <input
+                          class="admin-products__input"
+                          [(ngModel)]="form.code"
+                          name="code"
+                        />
+                      </label>
+                      <label class="admin-products__field">
+                        <span>Danh mục <span class="admin-products__required">*</span></span>
+                        <select
+                          class="admin-products__select"
+                          [(ngModel)]="form.categoryId"
+                          name="categoryId"
+                        >
+                          <option *ngFor="let c of categories" [ngValue]="c.id">
+                            {{ c.name }}
+                          </option>
+                        </select>
+                      </label>
+                      <label class="admin-products__field">
+                        <span>Giá bán (đ)</span>
+                        <input
+                          class="admin-products__input"
+                          type="number"
+                          min="0"
+                          [(ngModel)]="form.price"
+                          name="price"
+                        />
+                      </label>
+                      <label class="admin-products__field">
+                        <span>Tồn kho</span>
+                        <input
+                          class="admin-products__input"
+                          type="number"
+                          min="0"
+                          [(ngModel)]="form.stockQuantity"
+                          name="stockQuantity"
+                        />
+                      </label>
+                      <label class="admin-products__field admin-products__field--row">
+                        <span>Trạng thái</span>
+                        <input
+                          type="checkbox"
+                          [(ngModel)]="form.isActive"
+                          name="isActive"
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="admin-products__form-section">
+                    <h3>Mô tả</h3>
+                    <textarea
+                      class="admin-products__input"
+                      rows="4"
+                      [(ngModel)]="form.description"
+                      name="description"
+                      placeholder="Mô tả ngắn về ý nghĩa, chất liệu, gợi ý ứng dụng..."
+                    ></textarea>
+                  </div>
+                </form>
+              </div>
+
+              <div>
+                <div class="admin-products__preview">
+                  <h3>Xem trước ảnh hoa văn</h3>
+                  <div
+                    class="admin-products__preview-image"
+                    [ngClass]="{ 'admin-products__preview-image--empty': !previewUrl }"
+                  >
+                    <ng-container *ngIf="previewUrl; else noImage">
+                      <img [src]="previewUrl" alt="Preview" />
+                    </ng-container>
+                    <ng-template #noImage>
+                      <span>Chưa chọn ảnh hoa văn</span>
+                    </ng-template>
+                  </div>
+                  <div class="admin-products__preview-meta">
+                    <div class="admin-products__preview-name">
+                      {{ form.name || 'Tên hoa văn' }}
+                    </div>
+                    <div class="admin-products__preview-sub">
+                      {{ getCategoryNameById(form.categoryId) }}
+                    </div>
+                    <div class="admin-products__preview-price">
+                      {{ form.price || 0 | number }}đ
+                    </div>
+                  </div>
+                  <div class="admin-products__preview-tips">
+                    <p>Ảnh nên có chất lượng cao, nền sáng để nổi bật chi tiết hoa văn.</p>
+                    <ul>
+                      <li>Tỷ lệ khung hình đề xuất: 4:3 hoặc vuông.</li>
+                      <li>Dung lượng &lt; 2MB.</li>
+                    </ul>
+                  </div>
+                  <div class="admin-products__field">
+                    <span>Ảnh hoa văn <span class="admin-products__required">*</span></span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      (change)="onFileChange($event)"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="admin-products__modal-foot">
+            <button
+              type="button"
+              class="btn btn-outline btn-sm"
+              (click)="closeForm()"
+              [disabled]="loading"
+            >
+              Hủy
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm"
+              (click)="save()"
+              [disabled]="loading"
+            >
+              {{ editingId ? 'Lưu thay đổi' : 'Tạo mới' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

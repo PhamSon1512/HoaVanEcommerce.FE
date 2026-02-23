@@ -1,0 +1,227 @@
+<section class="user-orders">
+  <div class="container">
+    <div class="user-orders__header">
+      <h1>Đơn hàng của tôi</h1>
+    </div>
+
+    <div class="user-orders__error" *ngIf="error">
+      {{ error }}
+    </div>
+
+    <div class="user-orders__loading" *ngIf="isLoading">
+      Đang tải danh sách đơn hàng...
+    </div>
+
+    <div class="user-orders__list" *ngIf="!isLoading && orders.length > 0">
+      <div class="user-orders__card" *ngFor="let order of orders">
+        <div class="user-orders__card-header">
+          <div class="user-orders__card-info">
+            <h3>Đơn hàng: {{ order.orderCode }}</h3>
+            <p class="user-orders__card-date">
+              Ngày đặt: {{ order.createdAt | date:'dd/MM/yyyy HH:mm' }}
+            </p>
+          </div>
+          <div class="user-orders__card-status">
+            <span [class]="'status-badge ' + getStatusClass(order.orderStatus, 'order')">
+              {{ getStatusLabel(order.orderStatus, 'order') }}
+            </span>
+          </div>
+        </div>
+
+        <div class="user-orders__card-body">
+          <div class="user-orders__items">
+            <div class="user-orders__item" *ngFor="let item of order.items">
+              <img [src]="item.productImageUrl" [alt]="item.productName" />
+              <div class="user-orders__item-info">
+                <h4>{{ item.productName }}</h4>
+                <p>Mã: {{ item.productCode }}</p>
+                <p>Số lượng: {{ item.quantity }} × {{ item.unitPrice | number }}đ</p>
+              </div>
+              <div class="user-orders__item-total">
+                {{ item.lineTotal | number }}đ
+              </div>
+            </div>
+          </div>
+
+          <div class="user-orders__summary">
+            <div class="user-orders__summary-row">
+              <span>Trạng thái thanh toán:</span>
+              <span [class]="'status-badge ' + getStatusClass(order.paymentStatus, 'payment')">
+                {{ getStatusLabel(order.paymentStatus, 'payment') }}
+              </span>
+            </div>
+            <div class="user-orders__summary-row">
+              <span>Trạng thái vận chuyển:</span>
+              <span [class]="'status-badge ' + getStatusClass(order.shippingStatus, 'shipping')">
+                {{ getStatusLabel(order.shippingStatus, 'shipping') }}
+              </span>
+            </div>
+            <div class="user-orders__summary-row user-orders__summary-row--total">
+              <span>Tổng tiền:</span>
+              <strong>{{ order.totalAmount | number }}đ</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="user-orders__card-footer">
+          <button class="btn btn-outline" (click)="viewOrderDetail(order)">
+            Xem chi tiết
+          </button>
+          <button
+            *ngIf="canReportOrder(order)"
+            class="btn btn-outline"
+            (click)="openReportModal(order)"
+          >
+            Báo cáo đơn hàng
+          </button>
+          <button
+            *ngIf="canConfirmReceived(order)"
+            class="btn btn-primary"
+            (click)="openConfirmReceivedModal(order)">
+            Đã nhận hàng
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="user-orders__empty" *ngIf="!isLoading && orders.length === 0">
+      <div class="user-orders__empty-icon">📦</div>
+      <h2>Chưa có đơn hàng nào</h2>
+      <p>Bạn chưa có đơn hàng nào. Hãy tiếp tục mua sắm!</p>
+      <a routerLink="/danh-muc" class="btn btn-primary">Tiếp tục mua sắm</a>
+    </div>
+  </div>
+
+  <!-- Order Detail Modal -->
+  <div class="user-orders__modal" *ngIf="showDetailModal && selectedOrder" (click)="closeDetailModal()">
+    <div class="user-orders__modal-content" (click)="$event.stopPropagation()">
+      <div class="user-orders__modal-header">
+        <h2>Chi tiết đơn hàng</h2>
+        <button class="user-orders__modal-close" (click)="closeDetailModal()">×</button>
+      </div>
+      <div class="user-orders__modal-body">
+        <div class="user-orders__detail-section">
+          <h3>Thông tin đơn hàng</h3>
+          <div class="user-orders__detail-info">
+            <p><strong>Mã đơn:</strong> {{ selectedOrder.orderCode }}</p>
+            <p><strong>Ngày đặt:</strong> {{ selectedOrder.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
+            <p><strong>Trạng thái đơn:</strong>
+              <span [class]="'status-badge ' + getStatusClass(selectedOrder.orderStatus, 'order')">
+                {{ getStatusLabel(selectedOrder.orderStatus, 'order') }}
+              </span>
+            </p>
+            <p><strong>Trạng thái thanh toán:</strong>
+              <span [class]="'status-badge ' + getStatusClass(selectedOrder.paymentStatus, 'payment')">
+                {{ getStatusLabel(selectedOrder.paymentStatus, 'payment') }}
+              </span>
+            </p>
+            <p><strong>Trạng thái vận chuyển:</strong>
+              <span [class]="'status-badge ' + getStatusClass(selectedOrder.shippingStatus, 'shipping')">
+                {{ getStatusLabel(selectedOrder.shippingStatus, 'shipping') }}
+              </span>
+            </p>
+            <p *ngIf="selectedOrder.currentStatusNote"><strong>Ghi chú:</strong> {{ selectedOrder.currentStatusNote }}</p>
+          </div>
+        </div>
+
+        <div class="user-orders__detail-section">
+          <h3>Sản phẩm</h3>
+          <div class="user-orders__detail-items">
+            <div class="user-orders__detail-item" *ngFor="let item of selectedOrder.items">
+              <img [src]="item.productImageUrl" [alt]="item.productName" />
+              <div class="user-orders__detail-item-info">
+                <h4>{{ item.productName }}</h4>
+                <p>Mã: {{ item.productCode }}</p>
+                <p>Số lượng: {{ item.quantity }}</p>
+                <p>Đơn giá: {{ item.unitPrice | number }}đ</p>
+              </div>
+              <div class="user-orders__detail-item-total">
+                {{ item.lineTotal | number }}đ
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="user-orders__detail-section">
+          <div class="user-orders__detail-total">
+            <strong>Tổng tiền: {{ selectedOrder.totalAmount | number }}đ</strong>
+          </div>
+        </div>
+
+        <div class="user-orders__detail-section" *ngIf="selectedOrder.shippingInfo">
+          <h3>Thông tin giao hàng</h3>
+          <div class="user-orders__detail-info">
+            <p><strong>Người nhận:</strong> {{ selectedOrder.shippingInfo.receiverName }}</p>
+            <p><strong>Số điện thoại:</strong> {{ selectedOrder.shippingInfo.receiverPhone }}</p>
+            <p><strong>Địa chỉ:</strong> {{ selectedOrder.shippingInfo.fullAddress }}</p>
+            <p *ngIf="selectedOrder.shippingInfo.note"><strong>Ghi chú:</strong> {{ selectedOrder.shippingInfo.note }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="user-orders__modal-footer">
+        <button class="btn btn-primary" (click)="closeDetailModal()">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Received Modal -->
+  <div class="user-orders__modal" *ngIf="showConfirmModal && selectedOrder" (click)="closeConfirmModal()">
+    <div class="user-orders__modal-content" (click)="$event.stopPropagation()">
+      <div class="user-orders__modal-header">
+        <h2>Xác nhận đã nhận hàng</h2>
+        <button class="user-orders__modal-close" (click)="closeConfirmModal()">×</button>
+      </div>
+      <div class="user-orders__modal-body">
+        <p>Bạn có chắc chắn đã nhận được đơn hàng <strong>{{ selectedOrder.orderCode }}</strong>?</p>
+        <div class="user-orders__form-group">
+          <label>Ghi chú (tùy chọn):</label>
+          <textarea
+            [(ngModel)]="confirmNote"
+            class="user-orders__form-input"
+            rows="3"
+            placeholder="Nhập ghi chú nếu có..."
+          ></textarea>
+        </div>
+      </div>
+      <div class="user-orders__modal-footer">
+        <button class="btn btn-outline" (click)="closeConfirmModal()" [disabled]="isLoading">
+          Hủy
+        </button>
+        <button class="btn btn-primary" (click)="confirmReceived()" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Xác nhận</span>
+          <span *ngIf="isLoading">Đang xử lý...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report Order Modal -->
+  <div class="user-orders__modal" *ngIf="showReportModal && selectedOrder" (click)="closeReportModal()">
+    <div class="user-orders__modal-content" (click)="$event.stopPropagation()">
+      <div class="user-orders__modal-header">
+        <h2>Báo cáo đơn hàng</h2>
+        <button class="user-orders__modal-close" (click)="closeReportModal()">×</button>
+      </div>
+      <div class="user-orders__modal-body">
+        <p>Bạn đang báo cáo vấn đề với đơn hàng <strong>{{ selectedOrder.orderCode }}</strong>.</p>
+        <div class="user-orders__form-group">
+          <label>Nội dung báo cáo:</label>
+          <textarea
+            [(ngModel)]="reportContent"
+            class="user-orders__form-input"
+            rows="4"
+            placeholder="Mô tả chi tiết vấn đề bạn gặp phải (sai sản phẩm, hư hỏng, thiếu hàng, v.v.)"
+          ></textarea>
+        </div>
+      </div>
+      <div class="user-orders__modal-footer">
+        <button class="btn btn-outline" (click)="closeReportModal()">
+          Hủy
+        </button>
+        <button class="btn btn-primary" (click)="submitReport()">
+          Gửi báo cáo
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

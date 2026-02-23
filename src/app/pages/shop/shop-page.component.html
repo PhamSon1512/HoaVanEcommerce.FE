@@ -1,0 +1,77 @@
+<div [@pageAnimation]>
+  <!-- Hero Section -->
+  <section class="shop-hero">
+    <div class="container">
+      <nav class="breadcrumb">
+        <span>Trang chủ</span>
+        <span>/</span>
+        <span>Cửa hàng</span>
+      </nav>
+      <h1 class="shop-hero__title">Cửa hàng Nhớ như in</h1>
+      <p class="shop-hero__subtitle">
+        Khám phá các bộ sưu tập hoa văn được số hóa với chất lượng cao, sẵn sàng cho các dự án sáng tạo của bạn.
+      </p>
+    </div>
+  </section>
+
+  <!-- Featured Collections -->
+  <section class="shop-section shop-section--collections">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-header__title">Bộ sưu tập nổi bật</h2>
+        <p class="section-header__subtitle">Chọn bộ sưu tập phù hợp với dự án của bạn</p>
+      </div>
+
+      <div class="collections-grid">
+        <article class="collection-card" *ngFor="let collection of featuredCollections">
+          <div class="collection-card__image" [style.backgroundImage]="'url(' + collection.imageUrl + ')'">
+            <div class="collection-card__overlay"></div>
+            <div class="collection-card__badge">{{ collection.productCount }} hoa văn</div>
+          </div>
+          <div class="collection-card__body">
+            <h3 class="collection-card__title">{{ collection.title }}</h3>
+            <p class="collection-card__description">{{ collection.description }}</p>
+            <div class="collection-card__footer">
+              <span class="collection-card__price">{{ collection.price }}</span>
+              <button class="btn btn-primary" (click)="viewCollection(collection)">Xem chi tiết</button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Shop Features -->
+  <section class="shop-section shop-section--features">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-header__title">Tại sao chọn chúng tôi?</h2>
+        <p class="section-header__subtitle">Những lợi ích khi mua hoa văn từ Nhớ như in</p>
+      </div>
+
+      <div class="features-grid"> 
+        <div class="feature-card" *ngFor="let feature of shopFeatures">
+          <div class="feature-card__icon">{{ feature.icon }}</div>
+          <h3 class="feature-card__title">{{ feature.title }}</h3>
+          <p class="feature-card__description">{{ feature.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="shop-section shop-section--cta">
+    <div class="container">
+      <div class="cta-card">
+        <h2 class="cta-card__title">Sẵn sàng bắt đầu dự án của bạn?</h2>
+        <p class="cta-card__subtitle">
+          Khám phá toàn bộ kho tàng lịch sử, văn hóa Việt Nam và tìm những họa tiết hoàn hảo cho dự án của bạn.
+        </p>
+        <div class="cta-card__actions">
+          <button class="btn btn-primary btn-lg" (click)="navigateToAllProducts()">Xem tất cả hoa văn</button>
+          <button class="btn btn-outline btn-lg" (click)="openZalo()">Liên hệ tư vấn</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

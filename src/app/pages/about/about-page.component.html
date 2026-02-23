@@ -1,0 +1,96 @@
+<div [@pageAnimation]>
+  <!-- Hero Section -->
+  <section class="about-hero">
+    <div class="container">
+      <nav class="breadcrumb">
+        <span>Trang chủ</span>
+        <span>/</span>
+        <span>Về chúng tôi</span>
+      </nav>
+      <h1 class="about-hero__title">Về Nhớ như in</h1>
+      <p class="about-hero__subtitle">
+        Chúng tôi là đội ngũ đam mê văn hóa Việt Nam, cam kết bảo tồn và phát huy giá trị hoa văn cổ thông qua công nghệ số.
+      </p>
+    </div>
+  </section>
+
+  <!-- Mission Section -->
+  <section class="about-section about-section--mission">
+    <div class="container">
+      <div class="mission-content">
+        <div class="mission-content__text">
+          <h2 class="section-title">{{ mission.title }}</h2>
+          <p class="mission-description">{{ mission.description }}</p>
+        </div>
+        <div class="values-grid">
+          <div class="value-card" *ngFor="let value of mission.values">
+            <div class="value-card__icon">{{ value.icon }}</div>
+            <h3 class="value-card__title">{{ value.title }}</h3>
+            <p class="value-card__description">{{ value.description }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Timeline Section -->
+  <section class="about-section about-section--timeline">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-header__title">Hành trình của chúng tôi</h2>
+        <p class="section-header__subtitle">Những cột mốc quan trọng trong quá trình phát triển</p>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item" *ngFor="let item of timeline; let i = index">
+          <div class="timeline-item__year">{{ item.year }}</div>
+          <div class="timeline-item__content">
+            <h3 class="timeline-item__title">{{ item.title }}</h3>
+            <p class="timeline-item__description">{{ item.description }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team Section -->
+  <section class="about-section about-section--team">
+    <app-team-carousel
+      [members]="team"
+      title="Đội ngũ của chúng tôi"
+      subtitle="Những con người đam mê văn hóa và công nghệ"
+      [autoSlide]="true"
+      [slideInterval]="4000"
+      [visibleCount]="3"
+    ></app-team-carousel>
+  </section>
+
+  <!-- Contact CTA -->
+  <section class="about-section about-section--contact">
+    <div class="container">
+      <div class="contact-card">
+        <h2 class="contact-card__title">Liên hệ với chúng tôi</h2>
+        <p class="contact-card__subtitle">
+          Bạn có câu hỏi, đề xuất hoặc muốn hợp tác? Chúng tôi luôn sẵn sàng lắng nghe!
+        </p>
+        <div class="contact-card__info">
+          <div class="contact-item">
+            <span class="contact-item__icon">📞</span>
+            <span class="contact-item__text">0866 154 851</span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-item__icon">✉️</span>
+            <span class="contact-item__text">nhonhuin&#64;gmail.com</span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-item__icon">📍</span>
+            <span class="contact-item__text">Đại học FPT, Khu Công nghệ Cao Hà Nội</span>
+          </div>
+        </div>
+        <div class="contact-card__actions">
+          <button class="btn btn-primary btn-lg" (click)="openZalo()">Gửi tin nhắn</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

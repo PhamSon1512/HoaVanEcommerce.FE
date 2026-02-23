@@ -1,0 +1,72 @@
+<section class="auth-page">
+  <div class="container auth-card">
+    <h1 class="auth-title">Đăng ký</h1>
+    <p class="auth-subtitle">Tạo tài khoản để lưu giỏ hàng và theo dõi đơn hàng.</p>
+
+    <form #registerForm="ngForm" (ngSubmit)="submit()" class="auth-form">
+      <label class="auth-label">
+        <div>Họ và tên <span style="color: #e53935;">*</span></div>
+        <input
+          class="auth-input"
+          type="text"
+          [(ngModel)]="name"
+          name="name"
+          required
+          [pattern]="namePattern"
+          #nameModel="ngModel"
+        />
+        <p class="auth-error" *ngIf="nameModel.touched && nameModel.invalid">
+          {{ nameModel.errors?.['required'] ? 'Họ và tên không được để trống.' : 'Họ và tên không được chứa số.' }}
+        </p>
+      </label>
+
+      <label class="auth-label">
+        <div>Email <span style="color: #e53935;">*</span></div>
+        <input
+          class="auth-input"
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          required
+          email
+          #emailModel="ngModel"
+        />
+        <p class="auth-error" *ngIf="emailModel.touched && emailModel.invalid">
+          {{ emailModel.errors?.['required'] ? 'Email không được để trống.' : 'Email không đúng định dạng.' }}
+        </p>
+      </label>
+
+      <label class="auth-label">
+        <div>Số điện thoại</div>
+        <input class="auth-input" type="tel" [(ngModel)]="phoneNumber" name="phoneNumber" />
+      </label>
+
+      <label class="auth-label">
+        <div>Mật khẩu <span style="color: #e53935;">*</span></div>
+        <input
+          class="auth-input"
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          required
+          [minlength]="passwordMinLength"
+          #passwordModel="ngModel"
+        />
+        <p class="auth-error" *ngIf="passwordModel.touched && passwordModel.invalid">
+          {{ passwordModel.errors?.['required'] ? 'Mật khẩu không được để trống.' : 'Mật khẩu quá ngắn.' }}
+        </p>
+      </label>
+
+      <p class="auth-error" *ngIf="error">{{ error }}</p>
+
+      <button class="btn btn-primary auth-submit" type="submit" [disabled]="isSubmitting || registerForm.invalid">
+        Tạo tài khoản
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <span>Đã có tài khoản?</span>
+      <a class="auth-link" routerLink="/dang-nhap">Đăng nhập</a>
+    </div>
+  </div>
+</section>

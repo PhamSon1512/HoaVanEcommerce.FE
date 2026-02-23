@@ -1,0 +1,62 @@
+<div [@pageAnimation]>
+  <!-- Hero Section -->
+  <section class="news-hero">
+    <div class="container">
+      <nav class="breadcrumb">
+        <span>Trang chủ</span>
+        <span>/</span>
+        <span>Tin tức</span>
+      </nav>
+      <h1 class="news-hero__title">Tin tức & Bài viết</h1>
+      <p class="news-hero__subtitle">
+        Cập nhật những tin tức mới nhất về lịch sử, văn hóa Việt Nam, các dự án số hóa và ứng dụng trong thiết kế hiện đại.
+      </p>
+    </div>
+  </section>
+
+  <!-- Featured News -->
+  <section class="news-section news-section--featured">
+    <div class="container">
+      <article class="featured-news-card">
+        <div class="featured-news-card__image" [style.backgroundImage]="'url(' + featuredNews.imageUrl + ')'">
+          <div class="featured-news-card__overlay"></div>
+          <div class="featured-news-card__badge">{{ featuredNews.category }}</div>
+        </div>
+        <div class="featured-news-card__content">
+          <div class="featured-news-card__meta">
+            <time class="news-date">{{ featuredNews.date | date:'dd/MM/yyyy' }}</time>
+          </div>
+          <h2 class="featured-news-card__title">{{ featuredNews.title }}</h2>
+          <p class="featured-news-card__excerpt">{{ featuredNews.excerpt }}</p>
+          <button class="btn btn-primary" (click)="openDetail(featuredNews.id)">Đọc tiếp</button>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- News Grid -->
+  <section class="news-section news-section--list">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-header__title">Tất cả bài viết</h2>
+      </div>
+
+      <div class="news-grid">
+        <article class="news-card" *ngFor="let news of newsList">
+          <div class="news-card__image" [style.backgroundImage]="'url(' + news.imageUrl + ')'">
+            <div class="news-card__overlay"></div>
+            <div class="news-card__category">{{ news.category }}</div>
+          </div>
+          <div class="news-card__body">
+            <div class="news-card__meta">
+              <time class="news-date">{{ news.date | date:'dd/MM/yyyy' }}</time>
+            </div>
+            <h3 class="news-card__title">{{ news.title }}</h3>
+            <p class="news-card__excerpt">{{ news.excerpt }}</p>
+            <button class="news-card__link" (click)="openDetail(news.id)">Đọc tiếp →</button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+</div>

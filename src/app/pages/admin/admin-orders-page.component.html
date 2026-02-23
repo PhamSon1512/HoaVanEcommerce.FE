@@ -1,0 +1,206 @@
+<div class="admin-orders">
+  <div class="admin-orders__layout">
+    <!-- Sidebar -->
+    <aside class="admin-orders__sidebar">
+      <div class="admin-orders__logo">
+        <div class="admin-orders__logo-mark">HV</div>
+        <div>
+          <div class="admin-orders__logo-title">Hoa Văn Admin</div>
+          <div class="admin-orders__logo-sub">Dashboard quản trị</div>
+        </div>
+      </div>
+
+      <nav class="admin-orders__nav">
+        <div class="admin-orders__nav-group">
+          <p class="admin-orders__nav-label">Quản lý</p>
+          <a routerLink="/admin/hoa-van" class="admin-orders__nav-item" routerLinkActive="admin-orders__nav-item--active">
+            <span>Hoa văn</span>
+          </a>
+          <a routerLink="/admin/orders" class="admin-orders__nav-item" routerLinkActive="admin-orders__nav-item--active">
+            <span>Đơn hàng</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-orders__main">
+      <div class="admin-orders__header">
+        <h1>Quản lý đơn hàng</h1>
+        <button class="btn btn-primary" (click)="loadOrders()" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Làm mới</span>
+          <span *ngIf="isLoading">Đang tải...</span>
+        </button>
+      </div>
+
+  <div class="admin-orders__filters">
+    <div class="admin-orders__filter-group">
+      <label>Tìm kiếm:</label>
+      <input
+        type="text"
+        class="admin-orders__search-input"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onFilterChange()"
+        placeholder="Mã đơn, tên khách hàng, email..."
+      />
+    </div>
+    <div class="admin-orders__filter-group">
+      <label>Trạng thái đơn:</label>
+      <select [(ngModel)]="statusFilter" (ngModelChange)="onFilterChange()" class="admin-orders__select">
+        <option *ngFor="let status of orderStatuses" [value]="status.value">{{ status.label }}</option>
+      </select>
+    </div>
+    <div class="admin-orders__filter-group">
+      <label>Trạng thái thanh toán:</label>
+      <select [(ngModel)]="paymentStatusFilter" (ngModelChange)="onFilterChange()" class="admin-orders__select">
+        <option *ngFor="let status of paymentStatuses" [value]="status.value">{{ status.label }}</option>
+      </select>
+    </div>
+    <div class="admin-orders__filter-group">
+      <label>Trạng thái vận chuyển:</label>
+      <select [(ngModel)]="shippingStatusFilter" (ngModelChange)="onFilterChange()" class="admin-orders__select">
+        <option *ngFor="let status of shippingStatuses" [value]="status.value">{{ status.label }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="admin-orders__error" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <div class="admin-orders__table-container" *ngIf="!isLoading">
+    <table class="admin-orders__table">
+      <thead>
+        <tr>
+          <th>Mã đơn</th>
+          <th>Khách hàng</th>
+          <th>Sản phẩm</th>
+          <th>Tổng tiền</th>
+          <th>Trạng thái đơn</th>
+          <th>Thanh toán</th>
+          <th>Vận chuyển</th>
+          <th>Ngày tạo</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of filteredOrders" class="admin-orders__row">
+          <td>
+            <strong>{{ order.orderCode }}</strong>
+          </td>
+          <td>
+            <div class="admin-orders__user-info">
+              <div>{{ order.userName }}</div>
+              <div class="admin-orders__user-email">{{ order.userEmail }}</div>
+            </div>
+          </td>
+          <td>
+            <div class="admin-orders__items-preview">
+              <span *ngFor="let item of order.items.slice(0, 2)">
+                {{ item.productName }} (x{{ item.quantity }})
+              </span>
+              <span *ngIf="order.items.length > 2">...</span>
+            </div>
+          </td>
+          <td>
+            <strong>{{ order.totalAmount | number }}đ</strong>
+          </td>
+          <td>
+            <span [class]="'status-badge ' + getStatusClass(order.orderStatus, 'order')">
+              {{ getStatusLabel(order.orderStatus, 'order') }}
+            </span>
+          </td>
+          <td>
+            <span [class]="'status-badge ' + getStatusClass(order.paymentStatus, 'payment')">
+              {{ getStatusLabel(order.paymentStatus, 'payment') }}
+            </span>
+          </td>
+          <td>
+            <span [class]="'status-badge ' + getStatusClass(order.shippingStatus, 'shipping')">
+              {{ getStatusLabel(order.shippingStatus, 'shipping') }}
+            </span>
+          </td>
+          <td>
+            {{ order.createdAt | date:'dd/MM/yyyy HH:mm' }}
+          </td>
+          <td>
+            <div class="admin-orders__actions">
+              <button
+                *ngIf="canQuickVerify(order)"
+                class="btn btn-sm btn-primary admin-orders__verify-btn"
+                (click)="quickVerifyPayment(order)"
+                [disabled]="isLoading"
+              >
+                Xác minh thanh toán
+              </button>
+              <button
+                class="btn btn-sm btn-outline"
+                (click)="openStatusModal(order)"
+                [disabled]="isLoading"
+              >
+                Cập nhật vận chuyển
+            </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="filteredOrders.length === 0">
+          <td colspan="9" class="admin-orders__empty">
+            Không tìm thấy đơn hàng nào.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="admin-orders__loading" *ngIf="isLoading">
+    Đang tải...
+  </div>
+
+  <!-- Status Update Modal -->
+  <div class="admin-orders__modal" *ngIf="showStatusModal" (click)="closeStatusModal()">
+    <div class="admin-orders__modal-content" (click)="$event.stopPropagation()">
+      <div class="admin-orders__modal-header">
+        <h2>Cập nhật trạng thái đơn hàng</h2>
+        <button class="admin-orders__modal-close" (click)="closeStatusModal()">×</button>
+      </div>
+      <div class="admin-orders__modal-body" *ngIf="selectedOrder">
+        <div class="admin-orders__modal-info">
+          <p><strong>Mã đơn:</strong> {{ selectedOrder.orderCode }}</p>
+          <p><strong>Khách hàng:</strong> {{ selectedOrder.userName }} ({{ selectedOrder.userEmail }})</p>
+          <p><strong>Tổng tiền:</strong> {{ selectedOrder.totalAmount | number }}đ</p>
+        </div>
+        <div class="admin-orders__modal-form">
+          <div class="admin-orders__form-group">
+            <label>Trạng thái vận chuyển:</label>
+            <select [(ngModel)]="newShippingStatus" class="admin-orders__form-input">
+              <option *ngFor="let status of shippingStatuses.slice(1)" [value]="status.value">
+                {{ status.label }}
+              </option>
+            </select>
+          </div>
+          <div class="admin-orders__form-group">
+            <label>Ghi chú:</label>
+            <textarea
+              [(ngModel)]="statusNote"
+              class="admin-orders__form-input"
+              rows="3"
+              placeholder="Ghi chú về trạng thái đơn hàng..."
+            ></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="admin-orders__modal-footer">
+        <button class="btn btn-outline" (click)="closeStatusModal()" [disabled]="isLoading">
+          Hủy
+        </button>
+        <button class="btn btn-primary" (click)="updateOrderStatus()" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Cập nhật</span>
+          <span *ngIf="isLoading">Đang xử lý...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  </main>
+  </div>
+</div>

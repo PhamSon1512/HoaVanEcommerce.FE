@@ -1,0 +1,99 @@
+<div class="news-detail" *ngIf="newsItem">
+  <section class="news-detail__hero">
+    <div class="container">
+      <nav class="breadcrumb">
+        <span class="breadcrumb__link" (click)="goBack()">Tin tức</span>
+        <span>/</span>
+        <span>{{ newsItem.category }}</span>
+      </nav>
+
+      <h1 class="news-detail__title">{{ newsItem.title }}</h1>
+
+      <div class="news-detail__meta">
+        <time class="news-date">{{ newsItem.date | date:'dd/MM/yyyy' }}</time>
+        <span class="news-detail__dot">•</span>
+        <span class="news-detail__author">{{ newsItem.author }}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="news-detail__content">
+    <div class="container">
+      <div class="news-detail__image" [style.backgroundImage]="'url(' + newsItem.imageUrl + ')'">
+        <div class="news-detail__image-overlay"></div>
+      </div>
+
+      <div class="news-detail__body">
+        <p class="news-detail__excerpt">{{ newsItem.excerpt }}</p>
+
+        <div class="news-detail__article" [innerHTML]="newsItem.content"></div>
+
+        <div class="news-detail__tags" *ngIf="newsItem.tags?.length">
+          <span class="news-detail__tag" *ngFor="let tag of newsItem.tags; trackBy: trackById">{{ tag }}</span>
+        </div>
+
+        <div class="news-detail__actions">
+          <button class="btn btn-outline" (click)="goBack()">← Quay lại Tin tức</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="news-related" *ngIf="relatedNews.length">
+    <div class="container">
+      <div class="news-related__header">
+        <h2 class="news-related__title">Tin tức tiếp theo</h2>
+        <div class="news-related__controls">
+          <button class="news-related__btn" type="button" (click)="prevRelated()">‹</button>
+          <button class="news-related__btn" type="button" (click)="nextRelated()">›</button>
+        </div>
+      </div>
+
+      <div class="news-related__viewport">
+        <div class="news-related__track" [style.transform]="'translateX(-' + (currentRelatedIndex * 100) + '%)'">
+          <article
+            class="news-related__card"
+            *ngFor="let item of relatedNews; trackBy: trackById"
+            (click)="openDetail(item.id)"
+            tabindex="0"
+          >
+            <div class="news-related__image" [style.backgroundImage]="'url(' + item.imageUrl + ')'">
+              <div class="news-related__overlay"></div>
+              <div class="news-related__badge">{{ item.category }}</div>
+            </div>
+
+            <div class="news-related__body">
+              <div class="news-related__meta">
+                <time class="news-date">{{ item.date | date:'dd/MM/yyyy' }}</time>
+              </div>
+
+              <h3 class="news-related__card-title">{{ item.title }}</h3>
+              <p class="news-related__excerpt">{{ item.excerpt }}</p>
+              <div class="news-related__cta">Xem ngay →</div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="news-related__dots" *ngIf="relatedNews.length > 1">
+        <button
+          class="news-related__dot"
+          type="button"
+          *ngFor="let _ of relatedNews; let i = index"
+          [class.is-active]="i === currentRelatedIndex"
+          (click)="currentRelatedIndex = i"
+          aria-label="Đi tới tin {{ i + 1 }}"
+        ></button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="news-detail" *ngIf="!newsItem">
+  <div class="container">
+    <div class="news-detail__empty">
+      <h2>Không tìm thấy bài viết</h2>
+      <button class="btn btn-primary" (click)="goBack()">Quay lại Tin tức</button>
+    </div>
+  </div>
+</div>

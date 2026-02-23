@@ -1,0 +1,118 @@
+<header class="header">
+  <!-- Top bar với thông tin liên hệ -->
+  <div class="header__top">
+    <div class="container header__top-inner">
+      <div class="header__contact">
+        <a href="tel:0374533246" class="header__contact-item">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122L9.65 10.5a.678.678 0 0 1-.621-.337L7.117 6.79a.678.678 0 0 1-.337-.621l.122-2.307a.678.678 0 0 0-.122-.58L5.328 1.328Z" fill="currentColor"/>
+          </svg>
+          <span>0866 154 851</span>
+        </a>
+        <a href="mailto:vietnampattern@gmail.com" class="header__contact-item">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.501l-1.326-.759-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z" fill="currentColor"/>
+          </svg>
+          <span>nhonhuin&#64;gmail.com</span>
+        </a>
+        <span class="header__contact-item">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10Zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z" fill="currentColor"/>
+          </svg>
+          <span>Đại học FPT, Khu Công nghệ Cao Hà Nội</span>
+        </span>
+      </div>
+      <div class="header__top-right">
+        <div class="header__language">
+          <button class="header__language-btn" (click)="toggleLanguage()">
+            <span class="header__language-icon" [class.header__language-icon--vi]="currentLanguage === 'vi'" [class.header__language-icon--en]="currentLanguage === 'en'">
+              {{ currentLanguage === 'vi' ? '🇻🇳' : '🇬🇧' }}
+            </span>
+            <span class="header__language-text">{{ currentLanguage === 'vi' ? 'Tiếng Việt' : 'English' }}</span>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <div class="header__language-menu" *ngIf="isLanguageMenuOpen">
+            <button class="header__language-option" (click)="selectLanguage('vi')" [class.active]="currentLanguage === 'vi'">
+              <span>🇻🇳</span>
+              <span>Tiếng Việt</span>
+            </button>
+            <button class="header__language-option" (click)="selectLanguage('en')" [class.active]="currentLanguage === 'en'">
+              <span>🇬🇧</span>
+              <span>English</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main navigation -->
+  <div class="header__main">
+    <div class="container header__inner">
+      <div class="header__left">
+        <a routerLink="/" class="header__brand">
+          <img src="assets/images/LOGO.jpg" alt="Logo" class="header__logo-mark">
+          <div class="header__brand-text">
+            <span class="header__title">Nhớ như in</span>
+            <span class="header__subtitle">Làm mới lại văn hóa</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="header__nav">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="header__link">Trang chủ</a>
+        <a routerLink="/danh-muc" routerLinkActive="active" class="header__link">Hoa văn</a>
+        <a routerLink="/cua-hang" routerLinkActive="active" class="header__link">Cửa hàng</a>
+        <a routerLink="/tin-tuc" routerLinkActive="active" class="header__link">Tin tức</a>
+        <a routerLink="/ve-chung-toi" routerLinkActive="active" class="header__link">Về chúng tôi</a>
+        <a *ngIf="isLoggedIn$ | async" routerLink="/don-hang" routerLinkActive="active" class="header__link">Đơn hàng</a>
+        <a *ngIf="isAdmin$ | async" routerLink="/admin/hoa-van" routerLinkActive="active" class="header__link">Admin</a>
+      </nav>
+
+      <div class="header__right">
+        <!-- Logged out state -->
+        <ng-container *ngIf="!(isLoggedIn$ | async)">
+          <a class="btn btn-outline header__auth-btn" routerLink="/dang-ky">Đăng ký</a>
+          <a class="btn btn-primary header__auth-btn" routerLink="/dang-nhap">Đăng nhập</a>
+        </ng-container>
+
+        <!-- Logged in state -->
+        <ng-container *ngIf="isLoggedIn$ | async">
+          <div class="header__search" *ngIf="isSearchOpen">
+            <input
+              class="header__search-input"
+              type="text"
+              placeholder="Tìm kiếm hoa văn..."
+              [(ngModel)]="searchQuery"
+              (keyup.enter)="submitSearch()"
+            />
+            <button class="header__search-btn" type="button" (click)="submitSearch()">Tìm</button>
+          </div>
+
+          <button class="header__icon-btn" aria-label="Tìm kiếm" type="button" (click)="toggleSearch()">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="m18 18-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <a class="header__icon-btn" aria-label="Giỏ hàng" routerLink="/gio-hang" [class.active]="false">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 1H1v3h3V1Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M7 4H4L2 19h16L16 4h-3M7 4v3a3 3 0 0 0 6 0V4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="header__cart-badge">{{ cartCount }}</span>
+          </a>
+          <div class="header__user-info" *ngIf="currentUser$ | async as user">
+            <span class="header__user-name">{{ user.name }}</span>
+            <button class="btn btn-outline header__auth-btn" type="button" (click)="logout()">
+              Đăng xuất
+            </button>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</header>
+

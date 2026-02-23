@@ -1,0 +1,14 @@
+{
+  "HEADER": {
+    "HOME": "Trang chủ",
+    "PATTERNS": "Hoa văn",
+    "SHOP": "Cửa hàng",
+    "NEWS": "Tin tức",
+    "ABOUT_US": "Về chúng tôi",
+    "SEARCH": "Tìm kiếm",
+    "CART": "Giỏ hàng",
+    "REGISTER": "Đăng ký",
+    "LOGIN": "Đăng nhập",
+    "LOGOUT": "Đăng xuất"
+  }
+}
