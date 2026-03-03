@@ -1,0 +1,14 @@
+{
+  "HEADER": {
+    "HOME": "Home",
+    "PATTERNS": "Patterns",
+    "SHOP": "Shop",
+    "NEWS": "News",
+    "ABOUT_US": "About Us",
+    "SEARCH": "Search",
+    "CART": "Cart",
+    "REGISTER": "Register",
+    "LOGIN": "Login",
+    "LOGOUT": "Logout"
+  }
+}
