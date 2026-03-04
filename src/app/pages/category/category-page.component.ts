@@ -3,7 +3,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgFor, NgIf, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
 import { CartService } from '../../core/services/cart.service';
 import { CategoriesApiService } from '../../core/services/categories-api.service';
@@ -14,7 +14,7 @@ import { Product } from '../../core/models/product.model';
 @Component({
   selector: 'app-category-page',
   standalone: true,
-  imports: [NgFor, NgIf, CurrencyPipe, FormsModule],
+  imports: [NgFor, NgIf, CurrencyPipe, FormsModule, RouterLink],
   templateUrl: './category-page.component.html',
   styleUrls: ['./category-page.component.scss'],
   animations: [
@@ -23,15 +23,15 @@ import { Product } from '../../core/models/product.model';
         query('.category-hero', [
           style({ opacity: 0, transform: 'translateY(-20px)' }),
           animate('600ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
-        ]),
+        ], { optional: true }),
         query('.category-sidebar', [
           style({ opacity: 0, transform: 'translateX(-30px)' }),
-          animate('500ms ease-out 200ms', style({ opacity: 1, transform: 'translateX(0)' }))
-        ]),
+          animate('500ms 200ms ease-out', style({ opacity: 1, transform: 'translateX(0)' }))
+        ], { optional: true }),
         query('.category-toolbar', [
           style({ opacity: 0, transform: 'translateY(-15px)' }),
-          animate('500ms ease-out 300ms', style({ opacity: 1, transform: 'translateY(0)' }))
-        ]),
+          animate('500ms 300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+        ], { optional: true }),
         query('.product-card', [
           style({ opacity: 0, transform: 'translateY(20px) scale(0.95)' }),
           stagger(80, [
@@ -68,7 +68,7 @@ export class CategoryPageComponent implements OnInit {
     private cart: CartService,
     private categoriesApi: CategoriesApiService,
     private productsApi: ProductsApiService
-  ) {}
+  ) { }
 
   async ngOnInit() {
     // Scroll to top when component loads
@@ -114,7 +114,7 @@ export class CategoryPageComponent implements OnInit {
       const matchCategory = this.selectedCategoryId ? p.categoryId === this.selectedCategoryId : true;
       const matchSearch = this.searchTerm
         ? p.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-          (p.code ?? '').toLowerCase().includes(this.searchTerm.toLowerCase())
+        (p.code ?? '').toLowerCase().includes(this.searchTerm.toLowerCase())
         : true;
       return matchCategory && matchSearch;
     });

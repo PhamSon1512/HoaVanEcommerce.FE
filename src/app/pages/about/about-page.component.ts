@@ -15,13 +15,13 @@ import { TeamCarouselComponent } from '../../shared/components/team-carousel/tea
         query('.about-hero', [
           style({ opacity: 0, transform: 'translateY(-20px)' }),
           animate('600ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
-        ]),
+        ], { optional: true }),
         query('.about-section', [
           style({ opacity: 0, transform: 'translateY(30px)' }),
           stagger(100, [
             animate('600ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
           ])
-        ])
+        ], { optional: true })
       ])
     ])
   ]

@@ -15,13 +15,13 @@ import { trigger, transition, style, animate, query, stagger } from '@angular/an
         query('.shop-hero', [
           style({ opacity: 0, transform: 'translateY(-20px)' }),
           animate('600ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
-        ]),
+        ], { optional: true }),
         query('.shop-section', [
           style({ opacity: 0, transform: 'translateY(30px)' }),
           stagger(100, [
             animate('600ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
           ])
-        ])
+        ], { optional: true })
       ])
     ])
   ]
@@ -29,7 +29,7 @@ import { trigger, transition, style, animate, query, stagger } from '@angular/an
 export class ShopPageComponent {
   readonly zaloPhone = '0866154851';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   readonly featuredCollections = [
     {

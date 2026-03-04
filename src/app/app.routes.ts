@@ -11,10 +11,12 @@ import { AdminProductsPageComponent } from './pages/admin/admin-products-page.co
 import { AdminOrdersPageComponent } from './pages/admin/admin-orders-page.component';
 import { CartPageComponent } from './pages/cart/cart-page.component';
 import { UserOrdersPageComponent } from './pages/user/user-orders-page.component';
+import { ProductDetailPageComponent } from './pages/product-detail/product-detail-page.component';
 
 export const appRoutes: Routes = [
   { path: '', component: HomePageComponent, pathMatch: 'full' },
   { path: 'danh-muc', component: CategoryPageComponent },
+  { path: 'san-pham/:id', component: ProductDetailPageComponent },
   { path: 'cua-hang', component: ShopPageComponent },
   { path: 'tin-tuc', component: NewsPageComponent },
   { path: 'tin-tuc/:id', component: NewsDetailComponent },

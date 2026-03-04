@@ -1,0 +1,780 @@
+// ============================================================
+// Product Detail Page — Premium Shopee-style SCSS
+// Brand palette: #8b5e34 (dark brown), #b88b4a (gold), #faf7f2 (bg)
+// ============================================================
+
+:host {
+    display: block;
+}
+
+// ============================================================
+// Shared vars
+// ============================================================
+$brand: #8b5e34;
+$gold: #b88b4a;
+$orange: #ee4d2d; // Shopee-orange for "Mua ngay"
+$orange-dark: #d43f20;
+$bg: #faf7f2;
+$bg-card: #ffffff;
+$text: #222;
+$text-muted: #777;
+$border: #e8ddd0;
+$shadow-sm: 0 2px 12px rgba(139, 94, 52, 0.08);
+$shadow-md: 0 4px 24px rgba(139, 94, 52, 0.12);
+$radius: 16px;
+$radius-sm: 8px;
+
+// ============================================================
+// Page wrapper
+// ============================================================
+.pd-page {
+    min-height: 70vh;
+    background: $bg;
+    padding: 24px 0 64px;
+}
+
+// ============================================================
+// Breadcrumb
+// ============================================================
+.pd-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: $text-muted;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+
+    a {
+        color: $gold;
+        transition: color 0.2s;
+
+        &:hover {
+            color: $brand;
+            text-decoration: underline;
+        }
+    }
+
+    &__sep {
+        color: #ccc;
+    }
+
+    &__current {
+        color: $text;
+        font-weight: 500;
+        max-width: 260px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+// ============================================================
+// Main 2-column block
+// ============================================================
+.pd-main {
+    display: grid;
+    grid-template-columns: 480px 1fr;
+    gap: 40px;
+    align-items: start;
+
+    @media (max-width: 900px) {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+}
+
+// ============================================================
+// Gallery
+// ============================================================
+.pd-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: sticky;
+    top: 88px;
+
+    @media (max-width: 900px) {
+        position: static;
+    }
+
+    &__main {
+        position: relative;
+        border-radius: $radius;
+        overflow: hidden;
+        background: $bg-card;
+        box-shadow: $shadow-md;
+        aspect-ratio: 1;
+
+        &:hover .pd-gallery__overlay {
+            opacity: 1;
+        }
+    }
+
+    &__img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+
+        .pd-gallery__main:hover & {
+            transform: scale(1.04);
+        }
+    }
+
+    &__overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 16px;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    &__zoom-hint {
+        background: rgba(0, 0, 0, 0.6);
+        color: #fff;
+        font-size: 12px;
+        padding: 6px 14px;
+        border-radius: 999px;
+    }
+
+    &__thumbs {
+        display: flex;
+        gap: 8px;
+    }
+
+    &__thumb {
+        width: 68px;
+        height: 68px;
+        border-radius: $radius-sm;
+        overflow: hidden;
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: border-color 0.2s;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        &--active {
+            border-color: $gold;
+        }
+
+        &:hover {
+            border-color: $brand;
+        }
+    }
+}
+
+// ============================================================
+// Info Panel
+// ============================================================
+.pd-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    &__meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    &__title {
+        font-size: 22px;
+        font-weight: 700;
+        color: $text;
+        line-height: 1.4;
+        margin: 0;
+    }
+
+    &__rating-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        flex-wrap: wrap;
+    }
+
+    &__rating-score {
+        font-weight: 700;
+        color: $gold;
+        font-size: 15px;
+        text-decoration: underline;
+        text-decoration-color: $gold;
+    }
+
+    &__sep {
+        color: #ddd;
+    }
+
+    &__review-count,
+    &__sold {
+        color: $text-muted;
+    }
+
+    &__price-block {
+        background: linear-gradient(135deg, #fff8ee, #fff3e3);
+        border-radius: $radius-sm;
+        padding: 16px 20px;
+        border: 1px solid #f0dfc0;
+    }
+
+    &__price {
+        font-size: 32px;
+        font-weight: 800;
+        color: $orange;
+        letter-spacing: -0.5px;
+    }
+
+    &__desc-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: $brand;
+        margin: 0 0 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    &__desc-text {
+        font-size: 14px;
+        line-height: 1.8;
+        color: #444;
+        margin: 0;
+        white-space: pre-line;
+    }
+}
+
+// ============================================================
+// Badges
+// ============================================================
+.pd-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+
+    &--category {
+        background: linear-gradient(135deg, #8b5e34 0%, #b88b4a 100%);
+        color: #fff;
+    }
+
+    &--code {
+        background: #fff8ee;
+        color: $brand;
+        border: 1px solid #f0dfc0;
+    }
+}
+
+// ============================================================
+// Stock badge
+// ============================================================
+.pd-stock-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+
+    &--in {
+        background: #e6f9f0;
+        color: #1a7a45;
+        border: 1px solid #b2dcca;
+    }
+
+    &--out {
+        background: #fef0ee;
+        color: #d43f20;
+        border: 1px solid #f5c6bc;
+    }
+}
+
+// ============================================================
+// Stars
+// ============================================================
+.pd-stars {
+    display: inline-flex;
+    gap: 1px;
+}
+
+.pd-star {
+    color: #ddd;
+    font-size: 16px;
+    transition: color 0.2s;
+
+    &--filled {
+        color: #ffc400;
+    }
+}
+
+.pd-stars--lg .pd-star {
+    font-size: 22px;
+}
+
+.pd-stars--sm .pd-star {
+    font-size: 13px;
+}
+
+// ============================================================
+// Quantity Control
+// ============================================================
+.pd-qty-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.pd-qty-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-muted;
+    min-width: 72px;
+}
+
+.pd-qty-control {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid $border;
+    border-radius: $radius-sm;
+    overflow: hidden;
+    background: $bg-card;
+}
+
+.pd-qty-btn {
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: $brand;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+
+    &:hover:not(:disabled) {
+        background: #fff8ee;
+    }
+
+    &:disabled {
+        color: #ccc;
+        cursor: not-allowed;
+    }
+}
+
+.pd-qty-input {
+    width: 56px;
+    height: 40px;
+    border: none;
+    border-left: 1.5px solid $border;
+    border-right: 1.5px solid $border;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: $text;
+    background: none;
+    outline: none;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+    }
+}
+
+// ============================================================
+// Action Buttons
+// ============================================================
+.pd-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.pd-btn {
+    flex: 1;
+    min-width: 160px;
+    height: 52px;
+    border-radius: $radius-sm;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.02em;
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+    }
+
+    &__icon {
+        font-size: 18px;
+    }
+
+    &--cart {
+        background: $bg-card;
+        border: 2px solid $gold;
+        color: $brand;
+        box-shadow: $shadow-sm;
+
+        &:hover:not(:disabled) {
+            background: #fff8ee;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(184, 139, 74, 0.25);
+        }
+
+        &:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        &.pd-btn--added {
+            background: linear-gradient(135deg, #e6f9f0, #d4f5e6);
+            border-color: #1a7a45;
+            color: #1a7a45;
+        }
+    }
+
+    &--buy {
+        background: linear-gradient(135deg, $orange 0%, #ff6b4a 100%);
+        color: #fff;
+        box-shadow: 0 4px 16px rgba(238, 77, 45, 0.35);
+
+        &:hover:not(:disabled) {
+            background: linear-gradient(135deg, $orange-dark 0%, $orange 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(238, 77, 45, 0.45);
+        }
+
+        &:active:not(:disabled) {
+            transform: translateY(0);
+        }
+    }
+}
+
+// ============================================================
+// Policies
+// ============================================================
+.pd-policies {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 16px;
+    background: linear-gradient(135deg, #fff8ee, #fff3e3);
+    border-radius: $radius-sm;
+    border: 1px solid #f0dfc0;
+
+    @media (max-width: 480px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.pd-policy {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #555;
+
+    &__icon {
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+}
+
+// ============================================================
+// Reviews
+// ============================================================
+.pd-reviews {
+    margin-top: 48px;
+    background: $bg-card;
+    border-radius: $radius;
+    padding: 28px 32px;
+    box-shadow: $shadow-sm;
+
+    @media (max-width: 600px) {
+        padding: 20px 16px;
+    }
+
+    &__header {
+        margin-bottom: 24px;
+    }
+
+    &__title {
+        font-size: 20px;
+        font-weight: 700;
+        color: $text;
+        margin: 0 0 16px;
+    }
+
+    &__summary {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 20px;
+        background: linear-gradient(135deg, #fff8ee, #fff3e3);
+        border-radius: $radius-sm;
+        border: 1px solid #f0dfc0;
+    }
+
+    &__big-score {
+        font-size: 52px;
+        font-weight: 800;
+        color: $orange;
+        line-height: 1;
+    }
+
+    &__summary-right {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    &__count {
+        font-size: 13px;
+        color: $text-muted;
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+}
+
+.pd-review-card {
+    padding: 16px 0;
+    border-bottom: 1px solid #f0e8da;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &__top {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+
+    &__avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, $brand, $gold);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+    &__info {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        flex: 1;
+    }
+
+    &__name {
+        font-size: 14px;
+        font-weight: 600;
+        color: $text;
+    }
+
+    &__date {
+        margin-left: auto;
+        font-size: 12px;
+        color: $text-muted;
+        flex-shrink: 0;
+    }
+
+    &__comment {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.7;
+        color: #444;
+        padding-left: 52px;
+
+        @media (max-width: 480px) {
+            padding-left: 0;
+        }
+    }
+}
+
+// ============================================================
+// Related Products
+// ============================================================
+.pd-related {
+    margin-top: 48px;
+
+    &__title {
+        font-size: 20px;
+        font-weight: 700;
+        color: $text;
+        margin: 0 0 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid $border;
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+
+        @media (max-width: 900px) {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @media (max-width: 480px) {
+            grid-template-columns: repeat(1, 1fr);
+        }
+    }
+}
+
+.pd-related-card {
+    background: $bg-card;
+    border-radius: $radius-sm;
+    overflow: hidden;
+    box-shadow: $shadow-sm;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid $border;
+
+    &:hover {
+        transform: translateY(-6px);
+        box-shadow: $shadow-md;
+        border-color: $gold;
+
+        .pd-related-card__img-wrap img {
+            transform: scale(1.06);
+        }
+    }
+
+    &__img-wrap {
+        aspect-ratio: 1;
+        overflow: hidden;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+    }
+
+    &__body {
+        padding: 12px 14px;
+    }
+
+    &__category {
+        font-size: 11px;
+        font-weight: 600;
+        color: $gold;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin: 0 0 4px;
+    }
+
+    &__name {
+        font-size: 13px;
+        font-weight: 600;
+        color: $text;
+        margin: 0 0 8px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        line-height: 1.4;
+    }
+
+    &__price {
+        font-size: 14px;
+        font-weight: 700;
+        color: $orange;
+    }
+}
+
+// ============================================================
+// Loading State
+// ============================================================
+.pd-loading {
+    min-height: 50vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    color: $text-muted;
+
+    &__spinner {
+        width: 48px;
+        height: 48px;
+        border: 4px solid #f0e8da;
+        border-top-color: $gold;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    p {
+        font-size: 15px;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// ============================================================
+// Not Found State
+// ============================================================
+.pd-notfound {
+    min-height: 50vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 48px 24px;
+    text-align: center;
+
+    &__icon {
+        font-size: 64px;
+        opacity: 0.5;
+    }
+
+    h2 {
+        font-size: 22px;
+        font-weight: 700;
+        color: $text;
+        margin: 0;
+    }
+
+    p {
+        font-size: 15px;
+        color: $text-muted;
+        margin: 0;
+    }
+}

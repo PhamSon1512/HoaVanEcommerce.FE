@@ -10,27 +10,22 @@
 
   <div class="product-carousel__wrapper">
     <div class="container product-carousel__container">
-      <button
-        class="product-carousel__nav product-carousel__nav--prev"
-        (click)="prev()"
-        [disabled]="!canGoPrev"
-        aria-label="Trước"
-      >
+      <button class="product-carousel__nav product-carousel__nav--prev" (click)="prev()" [disabled]="!canGoPrev"
+        aria-label="Trước">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
         </svg>
       </button>
 
       <div class="product-carousel__track">
-        <div
-          class="product-carousel__slide"
-          [style.transform]="transformValue"
-        >
+        <div class="product-carousel__slide" [style.transform]="transformValue">
           <article class="product-card" *ngFor="let product of products; trackBy: trackByProductId">
-            <div class="product-card__image-wrap">
+            <div class="product-card__image-wrap" (click)="viewDetail(product)" style="cursor:pointer">
               <img [src]="product.imageUrl" [alt]="product.name" />
               <div class="product-card__overlay">
-                <button class="product-card__quick-view">Xem nhanh</button>
+                <button class="product-card__quick-view" (click)="viewDetail(product); $event.stopPropagation()">Xem
+                  nhanh</button>
               </div>
             </div>
             <div class="product-card__body">
@@ -38,21 +33,21 @@
               <p class="product-card__code" *ngIf="product.code">{{ product.code }}</p>
               <div class="product-card__bottom">
                 <span class="product-card__price">{{ product.price | currency: 'VND':'symbol':'1.0-0':'vi' }}</span>
-                <button class="btn btn-primary btn-sm" (click)="addToCart(product)">Thêm vào giỏ</button>
+                <div class="product-card__actions">
+                  <button class="btn btn-outline btn-sm" (click)="viewDetail(product)">Chi tiết</button>
+                  <button class="btn btn-primary btn-sm" (click)="addToCart(product)">🛒 Thêm vào giỏ</button>
+                </div>
               </div>
             </div>
           </article>
         </div>
       </div>
 
-      <button
-        class="product-carousel__nav product-carousel__nav--next"
-        (click)="next()"
-        [disabled]="!canGoNext"
-        aria-label="Sau"
-      >
+      <button class="product-carousel__nav product-carousel__nav--next" (click)="next()" [disabled]="!canGoNext"
+        aria-label="Sau">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
         </svg>
       </button>
     </div>

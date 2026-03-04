@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { Product } from '../../../core/models/product.model';
 import { CartService } from '../../../core/services/cart.service';
 
@@ -21,12 +22,12 @@ export class ProductCarouselComponent implements OnInit, OnDestroy {
   visibleCount = 4; // Số sản phẩm hiển thị cùng lúc
   private slideIntervalId: any;
 
-  constructor(private cart: CartService) {}
-  
+  constructor(private cart: CartService, private router: Router) { }
+
   get slideWidth(): number {
     return 100 / this.visibleCount;
   }
-  
+
   get transformValue(): string {
     return `translateX(-${this.currentIndex * this.slideWidth}%)`;
   }
@@ -101,5 +102,9 @@ export class ProductCarouselComponent implements OnInit, OnDestroy {
 
   addToCart(product: Product) {
     this.cart.addProduct(product, 1);
+  }
+
+  viewDetail(product: Product) {
+    this.router.navigate(['/san-pham', product.id]);
   }
 }

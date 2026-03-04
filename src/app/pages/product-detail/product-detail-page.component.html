@@ -1,0 +1,205 @@
+<section class="pd-page" *ngIf="!isLoading && !notFound && product" [@fadeIn]>
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav class="pd-breadcrumb">
+      <a routerLink="/">Trang chủ</a>
+      <span class="pd-breadcrumb__sep">›</span>
+      <a routerLink="/danh-muc">Hoa văn</a>
+      <span class="pd-breadcrumb__sep">›</span>
+      <span class="pd-breadcrumb__current">{{ product.name }}</span>
+    </nav>
+
+    <!-- Main Product Block -->
+    <div class="pd-main" [@slideUp]>
+
+      <!-- Gallery -->
+      <div class="pd-gallery">
+        <div class="pd-gallery__main">
+          <img [src]="product.imageUrl" [alt]="product.name" class="pd-gallery__img" />
+          <div class="pd-gallery__overlay">
+            <span class="pd-gallery__zoom-hint">🔍 Di chuột để phóng to</span>
+          </div>
+        </div>
+        <div class="pd-gallery__thumbs">
+          <div class="pd-gallery__thumb pd-gallery__thumb--active">
+            <img [src]="product.imageUrl" [alt]="product.name" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Panel -->
+      <div class="pd-info">
+
+        <!-- Category badge & code -->
+        <div class="pd-info__meta">
+          <span class="pd-badge pd-badge--category">{{ product.categoryName }}</span>
+          <span class="pd-badge pd-badge--code" *ngIf="product.code">{{ product.code }}</span>
+        </div>
+
+        <!-- Title -->
+        <h1 class="pd-info__title">{{ product.name }}</h1>
+
+        <!-- Rating Row -->
+        <div class="pd-info__rating-row">
+          <div class="pd-stars">
+            <span *ngFor="let filled of starsArray" [class.pd-star--filled]="filled" class="pd-star">★</span>
+          </div>
+          <span class="pd-info__rating-score">{{ ratingScore }}</span>
+          <span class="pd-info__sep">|</span>
+          <span class="pd-info__review-count">{{ reviewCount }} đánh giá</span>
+          <span class="pd-info__sep">|</span>
+          <span class="pd-info__sold">{{ soldCount | number }} đã bán</span>
+        </div>
+
+        <!-- Price -->
+        <div class="pd-info__price-block">
+          <span class="pd-info__price">{{ product.price | currency: 'VND':'symbol':'1.0-0':'vi' }}</span>
+        </div>
+
+        <!-- Stock status -->
+        <div class="pd-info__stock">
+          <span class="pd-stock-badge pd-stock-badge--in" *ngIf="product.stockQuantity > 0">
+            ✓ Còn hàng ({{ product.stockQuantity }} sản phẩm)
+          </span>
+          <span class="pd-stock-badge pd-stock-badge--out" *ngIf="product.stockQuantity === 0">
+            ✗ Hết hàng
+          </span>
+        </div>
+
+        <!-- Description -->
+        <div class="pd-info__desc" *ngIf="product.description">
+          <h3 class="pd-info__desc-title">Mô tả sản phẩm</h3>
+          <p class="pd-info__desc-text">{{ product.description }}</p>
+        </div>
+
+        <!-- Quantity -->
+        <div class="pd-qty-row">
+          <span class="pd-qty-label">Số lượng</span>
+          <div class="pd-qty-control">
+            <button class="pd-qty-btn" (click)="decreaseQty()" [disabled]="quantity <= 1">−</button>
+            <input
+              class="pd-qty-input"
+              type="number"
+              [value]="quantity"
+              min="1"
+              [max]="product.stockQuantity"
+              (change)="setQty(+$any($event.target).value)"
+            />
+            <button class="pd-qty-btn" (click)="increaseQty()" [disabled]="quantity >= product.stockQuantity">+</button>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="pd-actions">
+          <button
+            class="pd-btn pd-btn--cart"
+            (click)="addToCart()"
+            [disabled]="product.stockQuantity === 0"
+            [class.pd-btn--added]="addedToCart"
+          >
+            <span class="pd-btn__icon">🛒</span>
+            <span *ngIf="!addedToCart">Thêm vào giỏ hàng</span>
+            <span *ngIf="addedToCart">✓ Đã thêm vào giỏ!</span>
+          </button>
+          <button
+            class="pd-btn pd-btn--buy"
+            (click)="buyNow()"
+            [disabled]="product.stockQuantity === 0"
+          >
+            Mua ngay
+          </button>
+        </div>
+
+        <!-- Policy chips -->
+        <div class="pd-policies">
+          <div class="pd-policy">
+            <span class="pd-policy__icon">⚡</span>
+            <span>Nhận file ngay sau thanh toán</span>
+          </div>
+          <div class="pd-policy">
+            <span class="pd-policy__icon">🎨</span>
+            <span>Độ phân giải cao, scale không giới hạn</span>
+          </div>
+          <div class="pd-policy">
+            <span class="pd-policy__icon">💼</span>
+            <span>Giấy phép thương mại toàn diện</span>
+          </div>
+          <div class="pd-policy">
+            <span class="pd-policy__icon">🔄</span>
+            <span>Cập nhật miễn phí trọn đời</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <section class="pd-reviews">
+      <div class="pd-reviews__header">
+        <h2 class="pd-reviews__title">Đánh giá sản phẩm</h2>
+        <div class="pd-reviews__summary">
+          <span class="pd-reviews__big-score">{{ ratingScore }}</span>
+          <div class="pd-reviews__summary-right">
+            <div class="pd-stars pd-stars--lg">
+              <span *ngFor="let filled of starsArray" [class.pd-star--filled]="filled" class="pd-star">★</span>
+            </div>
+            <span class="pd-reviews__count">{{ reviewCount }} đánh giá</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pd-reviews__list">
+        <div class="pd-review-card" *ngFor="let r of reviews">
+          <div class="pd-review-card__top">
+            <div class="pd-review-card__avatar">{{ r.avatar }}</div>
+            <div class="pd-review-card__info">
+              <span class="pd-review-card__name">{{ r.name }}</span>
+              <div class="pd-stars pd-stars--sm">
+                <span *ngFor="let i of [1,2,3,4,5]" class="pd-star" [class.pd-star--filled]="i <= r.stars">★</span>
+              </div>
+            </div>
+            <span class="pd-review-card__date">{{ r.date }}</span>
+          </div>
+          <p class="pd-review-card__comment">{{ r.comment }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Related Products -->
+    <section class="pd-related" *ngIf="relatedProducts.length > 0">
+      <h2 class="pd-related__title">Sản phẩm liên quan</h2>
+      <div class="pd-related__grid">
+        <article
+          class="pd-related-card"
+          *ngFor="let rp of relatedProducts"
+          (click)="goToRelated(rp.id)"
+        >
+          <div class="pd-related-card__img-wrap">
+            <img [src]="rp.imageUrl" [alt]="rp.name" />
+          </div>
+          <div class="pd-related-card__body">
+            <p class="pd-related-card__category">{{ rp.categoryName }}</p>
+            <h3 class="pd-related-card__name">{{ rp.name }}</h3>
+            <span class="pd-related-card__price">{{ rp.price | currency: 'VND':'symbol':'1.0-0':'vi' }}</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- Loading State -->
+<div class="pd-loading" *ngIf="isLoading">
+  <div class="pd-loading__spinner"></div>
+  <p>Đang tải sản phẩm...</p>
+</div>
+
+<!-- Not Found State -->
+<div class="pd-notfound" *ngIf="!isLoading && notFound">
+  <div class="pd-notfound__icon">🔍</div>
+  <h2>Không tìm thấy sản phẩm</h2>
+  <p>Sản phẩm bạn đang tìm không tồn tại hoặc đã bị xóa.</p>
+  <a routerLink="/danh-muc" class="btn btn-primary">Quay lại danh mục</a>
+</div>
